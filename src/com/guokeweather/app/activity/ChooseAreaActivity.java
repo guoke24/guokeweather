@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import com.guokeweather.app.util.HttpCallbackListener;
 import com.guokeweather.app.util.HttpUtil;
 import com.guokeweather.app.util.Utility;
 
+@SuppressLint("ShowToast")
 public class ChooseAreaActivity extends Activity {
 
 	public static final int LEVEL_PROVINCE = 0;
@@ -77,9 +79,9 @@ public class ChooseAreaActivity extends Activity {
 		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
-			//Intent intent = new Intent(this, WeatherActivity.class);
-			//startActivity(intent);
-			//finish();
+			Intent intent = new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
 			return;
 		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,6 +91,9 @@ public class ChooseAreaActivity extends Activity {
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
 		guokeWeatherDB = GuokeWeatherDB.getInstance(this);
+		
+		queryProvinces();  // 加载省级数据
+		
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int index,
@@ -101,14 +106,15 @@ public class ChooseAreaActivity extends Activity {
 					queryCounties();
 				} else if (currentLevel == LEVEL_COUNTY) {
 					String countyCode = countyList.get(index).getCountyCode();
-					//Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
-					//intent.putExtra("county_code", countyCode);
-					//startActivity(intent);
-					//finish();
+					Toast.makeText(ChooseAreaActivity.this, "代号:"+countyCode, Toast.LENGTH_LONG).show();
+					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
-		queryProvinces();  // 加载省级数据
+		
 	}
 
 	/**
@@ -138,6 +144,7 @@ public class ChooseAreaActivity extends Activity {
 	private void queryCities() {
 		cityList = guokeWeatherDB.loadCities(selectedProvince.getId());
 		if (cityList.size() > 0) {
+			Toast.makeText(this, "代号:"+selectedProvince.getProvinceCode(), Toast.LENGTH_SHORT).show();
 			dataList.clear();
 			for (City city : cityList) {
 				dataList.add(city.getCityName());
@@ -157,6 +164,7 @@ public class ChooseAreaActivity extends Activity {
 	private void queryCounties() {
 		countyList = guokeWeatherDB.loadCounties(selectedCity.getId());
 		if (countyList.size() > 0) {
+			Toast.makeText(this, "代号:"+selectedCity.getCityCode(), Toast.LENGTH_LONG).show();
 			dataList.clear();
 			for (County county : countyList) {
 				dataList.add(county.getCountyName());

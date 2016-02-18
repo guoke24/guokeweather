@@ -23,6 +23,11 @@ public class Utility {
 
 	/**
 	 * 解析和处理服务器返回的省级数据,最终把数据写入数据库对应的表
+	 * 例如:
+	 * 01|北京,02|上海,03|天津,04|重庆,05|黑龙江,06|吉林,07|辽宁,08|内蒙古,
+	 * 09|河北,10|山西,11|陕西,12|山东,13|新疆,14|西藏,15|青海,16|甘肃,17|宁夏,
+	 * 18|河南,19|江苏,20|湖北,21|浙江,22|安徽,23|福建,24|江西,25|湖南,26|贵州,
+	 * 27|四川,28|广东,29|云南,30|广西,31|海南,32|香港,33|澳门,34|台湾
 	 */
 	public synchronized static boolean handleProvincesResponse(
 			GuokeWeatherDB guokeWeatherDB, String response) {
@@ -44,9 +49,12 @@ public class Utility {
 	}
 
 	/**
-	 * 解析和处理服务器返回的市级数据
+	 * 解析和处理服务器返回的市级数据,最终把数据写入数据库对应的表
+	 * 例如:
+	 * 1901|南京,1902|无锡,1903|镇江,1904|苏州,1905|南通,1906|扬州,1907|盐城,
+	 * 1908|徐州,1909|淮安,1910|连云港,1911|常州,1912|泰州,1913|宿迁
 	 */
-	public static boolean handleCitiesResponse(GuokeWeatherDB coolWeatherDB,
+	public static boolean handleCitiesResponse(GuokeWeatherDB guokeWeatherDB,
 			String response, int provinceId) {
 		if (!TextUtils.isEmpty(response)) {
 			String[] allCities = response.split(",");
@@ -58,7 +66,7 @@ public class Utility {
 					city.setCityName(array[1]);
 					city.setProvinceId(provinceId);
 					// 将解析出来的数据存储到City表
-					coolWeatherDB.saveCity(city);
+					guokeWeatherDB.saveCity(city);
 				}
 				return true;
 			}
@@ -67,9 +75,12 @@ public class Utility {
 	}
 
 	/**
-	 * 解析和处理服务器返回的县级数据
+	 * 解析和处理服务器返回的县级数据,最终把数据写入数据库对应的表
+	 * 
+	 * 190401|苏州,190402|常熟,190403|张家港,190404|昆山,190405|吴县东山,
+	 * 190406|吴县,190407|吴江,190408|太仓
 	 */
-	public static boolean handleCountiesResponse(GuokeWeatherDB coolWeatherDB,
+	public static boolean handleCountiesResponse(GuokeWeatherDB guokeWeatherDB,
 			String response, int cityId) {
 		if (!TextUtils.isEmpty(response)) {
 			String[] allCounties = response.split(",");
@@ -81,7 +92,7 @@ public class Utility {
 					county.setCountyName(array[1]);
 					county.setCityId(cityId);
 					// 将解析出来的数据存储到County表
-					coolWeatherDB.saveCounty(county);
+					guokeWeatherDB.saveCounty(county);
 				}
 				return true;
 			}
@@ -91,6 +102,10 @@ public class Utility {
 
 	/**
 	 * 解析服务器返回的JSON数据，并将解析出的数据存储到本地。
+	 * 
+	 * {"weatherinfo":{"city":"昆山","cityid":"101190404",
+	 * "temp1":"20℃","temp2":"11℃","weather":"小雨",
+	 * "img1":"d7.gif","img2":"n7.gif","ptime":"08:00"}}
 	 */
 	public static void handleWeatherResponse(Context context, String response) {
 		try {
