@@ -9,7 +9,11 @@
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -28,6 +32,12 @@
             android:name="com.guokeweather.app.activity.WeatherActivity"
             android:label="@string/title_activity_weather" >
         </activity>
+        
+        <service android:name="com.guokeweather.app.service.AutoUpdateService" >
+        </service>
+
+        <receiver android:name="com.guokeweather.app.receiver.AutoUpdateReceiver" >
+        </receiver>
     </application>
 
 </manifest>

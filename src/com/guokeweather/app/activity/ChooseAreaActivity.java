@@ -75,7 +75,21 @@ public class ChooseAreaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//AdManager.getInstance(this).init("cf9c2a749cd97145","289874826c698edd", false);
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.choose_area);
+		
+		checkFrom();
+		inti();
+		setListener();
+		
+		queryProvinces();  // 加载省级数据
+		
+
+		
+	}
+
+	private void checkFrom(){
 		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
@@ -84,16 +98,17 @@ public class ChooseAreaActivity extends Activity {
 			finish();
 			return;
 		}
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.choose_area);
+	}
+	
+	private void inti(){
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
 		guokeWeatherDB = GuokeWeatherDB.getInstance(this);
-		
-		queryProvinces();  // 加载省级数据
-		
+	}
+	
+	private void setListener(){
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int index,
@@ -114,9 +129,8 @@ public class ChooseAreaActivity extends Activity {
 				}
 			}
 		});
-		
 	}
-
+	
 	/**
 	 * 1.查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
 	 * 2.将查询的结果更新到列表上,并更新title
